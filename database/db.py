@@ -1,7 +1,7 @@
 import sqlite3
 import os
 from flask import g
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 DB_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "spendly.db")
 
@@ -48,6 +48,14 @@ def create_user(name: str, email: str, password: str) -> int:
     )
     db.commit()
     return cursor.lastrowid
+
+
+def get_user_by_email(email: str):
+    db = get_db()
+    return db.execute(
+        "SELECT id, name, email, password_hash FROM users WHERE email = ?",
+        (email,),
+    ).fetchone()
 
 
 def seed_db():

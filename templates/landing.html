@@ -8,6 +8,12 @@
 
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% for category, message in messages %}
+<div style="background: var(--accent-light, #e8f0eb); color: var(--accent, #1a472a); border: 1px solid var(--accent, #1a472a); padding: 0.75rem 1.5rem; text-align: center; font-size: 0.9rem;">{{ message }}</div>
+{% endfor %}
+{% endwith %}
+
 <section class="hero hero--centered">
     <div class="hero-inner hero-inner--centered">
         <div class="hero-badge hero-badge--pill">
