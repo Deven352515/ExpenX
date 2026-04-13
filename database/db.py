@@ -39,6 +39,17 @@ def init_db():
     db.commit()
 
 
+def create_user(name: str, email: str, password: str) -> int:
+    password_hash = generate_password_hash(password)
+    db = get_db()
+    cursor = db.execute(
+        "INSERT INTO users (name, email, password_hash) VALUES (?, ?, ?)",
+        (name, email, password_hash),
+    )
+    db.commit()
+    return cursor.lastrowid
+
+
 def seed_db():
     db = get_db()
 
