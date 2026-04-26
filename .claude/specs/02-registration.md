@@ -4,7 +4,7 @@
 Implement user account creation for Spendly. The `GET /register` route and
 `register.html` template already exist; this step wires up the `POST /register`
 handler that validates form input, hashes the password, inserts a new user row,
-and redirects to the login page on success. This is the entry point for all
+and shows the success message then redirects to the login page on success. This is the entry point for all
 future authenticated features — every other step assumes a user exists in the
 database.
 
