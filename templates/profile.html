@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}Profile — Spendly{% endblock %}
+
+{% block content %}
+<section class="profile-page">
+    <div class="profile-container">
+
+        <div class="profile-hero">
+            <div class="profile-avatar">{{ user.name[0].upper() }}</div>
+            <div class="profile-hero-text">
+                <h1 class="profile-name">{{ user.name }}</h1>
+                <div class="profile-meta">
+                    <span class="profile-meta-item">
+                        <i data-lucide="mail"></i>
+                        {{ user.email }}
+                    </span>
+                    <span class="profile-meta-sep">·</span>
+                    <span class="profile-meta-item">
+                        <i data-lucide="calendar"></i>
+                        Member since {{ user.created_at[:10] }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="profile-alert profile-alert--{{ category }}">
+                    <i data-lucide="{{ 'check-circle' if category == 'success' else 'alert-circle' }}"></i>
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="profile-card">
+            <form method="POST" action="{{ url_for('profile') }}">
+
+                <div class="profile-section-label">
+                    <i data-lucide="user"></i>
+                    Account details
+                </div>
+
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="name">Display name</label>
+                    <input class="form-input" type="text" id="name" name="name"
+                           value="{{ user.name }}" required>
+                </div>
+
+                <div class="profile-divider"></div>
+
+                <div class="profile-section-label">
+                    <i data-lucide="lock"></i>
+                    Change password
+                    <span class="profile-section-hint">Leave blank to keep current</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="new_password">New password</label>
+                    <input class="form-input" type="password" id="new_password"
+                           name="new_password" autocomplete="new-password">
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label for="confirm_password">Confirm new password</label>
+                    <input class="form-input" type="password" id="confirm_password"
+                           name="confirm_password" autocomplete="new-password">
+                </div>
+
+                <div class="profile-actions">
+                    <button type="submit" class="btn-submit profile-save-btn">
+                        <i data-lucide="save"></i>
+                        Save changes
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+        <p class="auth-switch" style="margin-top: 1.5rem;">
+            <a href="{{ url_for('landing') }}">← Back to home</a>
+        </p>
+
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>lucide.createIcons();</script>
+{% endblock %}

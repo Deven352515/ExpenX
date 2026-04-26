@@ -58,6 +58,29 @@ def get_user_by_email(email: str):
     ).fetchone()
 
 
+def get_user_by_id(user_id: int):
+    db = get_db()
+    return db.execute(
+        "SELECT id, name, email, created_at FROM users WHERE id = ?",
+        (user_id,),
+    ).fetchone()
+
+
+def update_user(user_id: int, name: str, password_hash: str | None = None) -> None:
+    db = get_db()
+    if password_hash is not None:
+        db.execute(
+            "UPDATE users SET name = ?, password_hash = ? WHERE id = ?",
+            (name, password_hash, user_id),
+        )
+    else:
+        db.execute(
+            "UPDATE users SET name = ? WHERE id = ?",
+            (name, user_id),
+        )
+    db.commit()
+
+
 def seed_db():
     db = get_db()
 

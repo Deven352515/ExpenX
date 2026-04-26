@@ -1,8 +1,8 @@
 import os
 import sqlite3
 from flask import Flask, render_template, request, redirect, url_for, flash, abort, session
-from database.db import get_db, init_db, seed_db, create_user, get_user_by_email
-from werkzeug.security import check_password_hash
+from database.db import get_db, init_db, seed_db, create_user, get_user_by_email, get_user_by_id, update_user
+from werkzeug.security import check_password_hash, generate_password_hash
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-change-in-prod")
@@ -108,9 +108,38 @@ def logout():
     return redirect(url_for("landing"))
 
 
-@app.route("/profile")
+@app.route("/profile", methods=["GET", "POST"])
 def profile():
-    return "Profile page — coming in Step 4"
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+
+    user = get_user_by_id(user_id)
+    if user is None:
+        session.clear()
+        return redirect(url_for("login"))
+
+    if request.method == "GET":
+        return render_template("profile.html", user=user)
+
+    name             = request.form.get("name", "").strip()
+    new_password     = request.form.get("new_password", "")
+    confirm_password = request.form.get("confirm_password", "")
+
+    if not name:
+        flash("Display name cannot be blank.", "error")
+        return render_template("profile.html", user=user), 400
+
+    password_hash = None
+    if new_password or confirm_password:
+        if new_password != confirm_password:
+            flash("New passwords do not match.", "error")
+            return render_template("profile.html", user=user), 400
+        password_hash = generate_password_hash(new_password)
+
+    update_user(user_id, name, password_hash)
+    flash("Profile updated successfully.", "success")
+    return redirect(url_for("profile"))
 
 
 @app.route("/expenses/add")
